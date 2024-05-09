@@ -18,6 +18,8 @@ make --version
 cmake -S . -B build -G"MinGW Makefiles" -D"CMAKE_MAKE_PROGRAM:PATH=C:\Program Files (x86)\GnuWin32\bin\make"
 ```
 Specify last flag with your make path. 
+
+
 3. Build:
 ```bash
 cmake --build build
