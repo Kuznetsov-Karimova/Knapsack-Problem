@@ -7,11 +7,13 @@
 
 void nampack_app(std::vector<std::chrono::duration<double>>& all_results, bool isPrint, bool debug = false);
 
-size_t Nampack::algorithm(bool debug) {
+auto Nampack::algorithm(bool debug) -> size_t {
 
-    size_t max_greed_res = 0, q_greed_res = 0;
+    size_t max_greed_res = 0;
+    size_t q_greed_res = 0;
 
-    std::vector<size_t> max_greed_indexes, q_greed_indexes;
+    std::vector<size_t> max_greed_indexes;
+    std::vector<size_t> q_greed_indexes;
 
     std::vector<int> max_greed_res_subjects(m_count_of_sub, 0);
     std::vector<int> q_greed_res_subjects(m_count_of_sub, 0);
@@ -42,7 +44,7 @@ size_t Nampack::algorithm(bool debug) {
 
     size_t remainder_of_cap = m_nap_size;
 
-    for(int index : max_greed_indexes) {
+    for(auto index : max_greed_indexes) {
 
         ++m_count_of_opers;
         if (static_cast<size_t>(m_sub_sizes[index]) <= remainder_of_cap) {
@@ -57,7 +59,7 @@ size_t Nampack::algorithm(bool debug) {
 
     remainder_of_cap = m_nap_size;
 
-    for(int index : q_greed_indexes) {
+    for(auto index : q_greed_indexes) {
 
         ++m_count_of_opers;
         if (static_cast<size_t>(m_sub_sizes[index]) <= remainder_of_cap) {
@@ -76,13 +78,12 @@ size_t Nampack::algorithm(bool debug) {
         print_res();
         return max_greed_res;
 
-    } else {
-
+    }  
         m_res_subs = q_greed_res_subjects;
         print_res();
         return q_greed_res;
 
-    }
+   
 
 }
 

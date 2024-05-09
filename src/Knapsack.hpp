@@ -94,10 +94,10 @@ public:
 
     }
 
-    size_t algorithm(bool debug = false);
+    auto algorithm(bool debug = false) -> size_t;
 
-    [[nodiscard]] int get_count_of_opers() const { return m_count_of_opers; } 
-    [[nodiscard]] int get_nap_size() const { return m_nap_size; } 
+    [[nodiscard]] auto get_count_of_opers() const -> int { return m_count_of_opers; } 
+    [[nodiscard]] auto get_nap_size() const -> int { return m_nap_size; } 
 
 private:
     std::vector<int> m_sub_values;
@@ -107,6 +107,6 @@ private:
 
     size_t m_count_of_sub;
     std::vector<int> m_res_subs = {};
- 
-    int m_count_of_opers = 0;
+    
+    size_t m_count_of_opers = 0;
 };
