@@ -58,7 +58,6 @@ auto Knapsack::algorithm(bool debug) -> size_t {
             if (current_weight + obj.weight <= m_knapsack_capacity) {
                 current_weight += obj.weight;
                 total_value += obj.value;
-                objects_in_res.push_back(obj.number);
             }
         }
         return total_value;
@@ -97,7 +96,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
         child.included_objects.push_back(obj_arr[child.level].number);
 
         ++m_count_of_opers;
-        if (child.total_weight <= m_knapsack_capacity && child.total_value > value_res) {
+        if (child.total_weight <= m_knapsack_capacity && child.total_value >= value_res) {
             value_res = child.total_value;
             objects_in_res = child.included_objects;
         }
@@ -106,7 +105,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
                         m_knapsack_capacity, obj_arr, m_count_of_opers);
 
         ++m_count_of_opers;
-        if (child.upper_bound > value_res) {
+        if (child.upper_bound >= value_res) {
             search_vec.push_back(child);
             child_count++;
         }
@@ -120,7 +119,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
                         m_knapsack_capacity, obj_arr, m_count_of_opers);
 
         ++m_count_of_opers;
-        if (child.upper_bound > value_res) {
+        if (child.upper_bound >= value_res) {
             search_vec.push_back(child);
             child_count++;
         }
