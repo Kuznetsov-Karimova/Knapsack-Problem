@@ -52,6 +52,22 @@ void read_file(const std::string& path_to_file, size_t& res) {
 }
 
 
+struct Object {
+    int weight;
+    int value;
+    int number;
+
+    Object(int wgt, int val, int num) :
+        weight(wgt),
+        value(val),
+        number(num) {}
+
+    auto get_ratio() -> double {
+        return static_cast<double>(value) / weight;
+    }
+};
+
+
 class Knapsack {
 public:
 
@@ -90,7 +106,8 @@ public:
     }
 
     void print_res() const {
-
+    std::cout << "----------RESULT----------" << std::endl;
+    std::cout << "Items list:" << " ";
         for (int elem: m_res_subs) {
             std::cout << elem << " ";
         }
@@ -100,8 +117,24 @@ public:
 
     auto algorithm(bool debug = false) -> size_t;
 
+    [[nodiscard]] auto get_total_weight() const -> int {
+        int total_weight = 0;
+        for (int i = 0; i < m_count_of_sub; ++i) {
+            if (m_res_subs[i] == 1) {
+                total_weight += m_weights[i];
+            }
+        }
+        return total_weight;
+    }
     [[nodiscard]] auto get_count_of_opers() const -> size_t { return m_count_of_opers; } 
-    [[nodiscard]] auto get_knapsack_capacity() const -> size_t { return m_knapsack_capacity; } 
+    [[nodiscard]] auto get_knapsack_capacity() const -> size_t { return m_knapsack_capacity; }
+
+    // to easy work with branch_and_bound_alg
+    void define_by_object_struct() {
+        for (int i = 0; i < m_count_of_sub; ++i) {
+            obj_arr.emplace_back(m_weights[i], m_values[i], i);
+        }
+    }
 
 private:
     std::vector<int> m_values;
@@ -113,10 +146,12 @@ private:
     std::vector<int> m_res_subs = {};
     
     size_t m_count_of_opers = 0;
+
+    std::vector<Object> obj_arr;
 };
 
 
-void Knapsack_app(std::vector<std::chrono::duration<double>>& all_results, bool isPrint, bool debug = false) {
+void Knapsack_app(std::vector<std::chrono::duration<double>>& all_results, bool isPrint, bool debug = false, bool obj_struct = false) {
     // ALL TESTS
     std::chrono::duration<double> all_elapsed{};
 
@@ -124,7 +159,7 @@ void Knapsack_app(std::vector<std::chrono::duration<double>>& all_results, bool 
 
     for (auto test: test_files) {
         if (isPrint) {
-            std::cout << "Test: " << num << std::endl;
+            std::cout << "----------TEST " << num << "----------" <<std::endl;
         }
 
         Knapsack pack(test[0], test[1], test[2], test[3]);
@@ -134,6 +169,11 @@ void Knapsack_app(std::vector<std::chrono::duration<double>>& all_results, bool 
         pack.print_values();
         std::cout << "Weights: ";
         pack.print_weights();
+        std::cout << std::endl;
+
+        if (obj_struct) {
+            pack.define_by_object_struct();
+        }
 
         // ALGHORITM 1 TEST TIME START
         auto start = std::chrono::high_resolution_clock::now();
@@ -148,7 +188,8 @@ void Knapsack_app(std::vector<std::chrono::duration<double>>& all_results, bool 
         all_elapsed += elapsed;
 
         if (isPrint) {
-            std::cout << "Result: " << result << std::endl;
+            std::cout << "Knapsack value: " << result << std::endl;
+            std::cout << "Total weight: " << pack.get_total_weight() << std::endl;
             std::cout << "Time: " << elapsed.count() << " s" << std::endl;
             std::cout << "Count of opers: " << pack.get_count_of_opers() << std::endl;
 

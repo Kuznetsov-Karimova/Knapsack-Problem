@@ -36,7 +36,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
 
         for (int obj = 0; obj < m_count_of_sub; ++obj) {
             m_count_of_opers++;
-            if ((std::find(subset_M.begin(), subset_M.end(), obj) != subset_M.end())
+            if ((std::find(subset_M.begin(), subset_M.end(), obj) == subset_M.end())
                 && m_weights[obj] <= available_cap) {
                 res.push_back(obj);
                 available_cap -= m_weights[obj];
@@ -52,7 +52,6 @@ auto Knapsack::algorithm(bool debug) -> size_t {
     generate_combinations(m_count_of_sub, k, combinations);
     std::vector<std::vector<int>> all_subsets_M;
     for (const auto& subset : combinations) {
-        m_count_of_opers++;
         int subset_weight = 0;
         for (auto obj : subset) {
             subset_weight += m_weights[obj];
