@@ -15,12 +15,6 @@ public:
     std::vector<int> included_objects = {};
 };
 
-struct NodeComparator {
-    auto operator()(const Node& a, const Node& b) const -> bool {
-        return a.upper_bound < b.upper_bound;
-    }
-};
-
 auto calc_upper_bound(const Node& node, size_t obj_count, size_t knapsack_capacity,
                       const std::vector<Object>& obj_arr, size_t& count_of_opers) -> double {
     
@@ -54,25 +48,42 @@ auto Knapsack::algorithm(bool debug) -> size_t {
 
     int value_res = 0;
     std::vector<int> objects_in_res;
-    std::priority_queue<Node, std::vector<Node>, NodeComparator> pr_queue;
+    // // положим в value_res - нижнюю границу (подсчет жадной эвристики)
+    // auto calc_greedy = [&] () {
+    //     int current_weight = 0;
+    //     int total_value = 0;
+
+    //     for (const auto& obj : obj_arr) {
+    //         m_count_of_opers++;
+    //         if (current_weight + obj.weight <= m_knapsack_capacity) {
+    //             current_weight += obj.weight;
+    //             total_value += obj.value;
+    //         }
+    //     }
+    //     return total_value;
+    // };
+    // value_res = calc_greedy();
+
+    std::vector<Node> search_vec;
 
     Node parent;
     Node child;
 
     parent.level = -1;
     parent.total_value = parent.total_weight = 0;
-    pr_queue.push(parent);
+    search_vec.push_back(parent);
 
-    while (!pr_queue.empty()) {
-        ++m_count_of_sol; // ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ +1
+    while (!search_vec.empty()) {
+        int child_count = 0; // ЕСЛИ ДЕТЕЙ НЕТ, ТО ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ (костыль немного)
 
         ++m_count_of_opers;
 
-        parent = pr_queue.top();
-        pr_queue.pop();
+        parent = search_vec.front();
+        search_vec.erase(search_vec.begin());
         
         ++m_count_of_opers;
         if (parent.level == m_count_of_sub - 1) {
+            m_count_of_sol++; // ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ, ТАК КАК ЛИСТ
             continue;
         }
 
@@ -95,7 +106,8 @@ auto Knapsack::algorithm(bool debug) -> size_t {
 
         ++m_count_of_opers;
         if (child.upper_bound > value_res) {
-            pr_queue.push(child);
+            search_vec.push_back(child);
+            child_count++;
         }
 
         // Не берем
@@ -108,7 +120,12 @@ auto Knapsack::algorithm(bool debug) -> size_t {
 
         ++m_count_of_opers;
         if (child.upper_bound > value_res) {
-            pr_queue.push(child);
+            search_vec.push_back(child);
+            child_count++;
+        }
+
+        if (child_count == 2) {
+            m_count_of_sol++; // ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ
         }
     }
     ++m_count_of_opers;
