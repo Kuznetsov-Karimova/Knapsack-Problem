@@ -48,21 +48,22 @@ auto Knapsack::algorithm(bool debug) -> size_t {
 
     int value_res = 0;
     std::vector<int> objects_in_res;
-    // // положим в value_res - нижнюю границу (подсчет жадной эвристики)
-    // auto calc_greedy = [&] () {
-    //     int current_weight = 0;
-    //     int total_value = 0;
+    // положим в value_res - нижнюю границу (подсчет жадной эвристики)
+    auto calc_greedy = [&] () {
+        int current_weight = 0;
+        int total_value = 0;
 
-    //     for (const auto& obj : obj_arr) {
-    //         m_count_of_opers++;
-    //         if (current_weight + obj.weight <= m_knapsack_capacity) {
-    //             current_weight += obj.weight;
-    //             total_value += obj.value;
-    //         }
-    //     }
-    //     return total_value;
-    // };
-    // value_res = calc_greedy();
+        for (const auto& obj : obj_arr) {
+            m_count_of_opers++;
+            if (current_weight + obj.weight <= m_knapsack_capacity) {
+                current_weight += obj.weight;
+                total_value += obj.value;
+                objects_in_res.push_back(obj.number);
+            }
+        }
+        return total_value;
+    };
+    value_res = calc_greedy();
 
     std::vector<Node> search_vec;
 
