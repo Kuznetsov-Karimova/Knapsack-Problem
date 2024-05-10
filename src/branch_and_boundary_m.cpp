@@ -74,7 +74,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
     search_vec.push_back(parent);
 
     while (!search_vec.empty()) {
-        int child_count = 0; // ЕСЛИ ДЕТЕЙ НЕТ, ТО ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ (костыль немного)
+        int child_count = 0; // ЕСЛИ ДЕТЕЙ НЕ БУДЕТ, ТО ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ (костыль немного)
 
         ++m_count_of_opers;
 
@@ -124,7 +124,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
             child_count++;
         }
 
-        if (child_count == 2) {
+        if (child_count == 0) {
             m_count_of_sol++; // ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ
         }
     }
