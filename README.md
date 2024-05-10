@@ -4,6 +4,9 @@ University laboratory work
 
 **Authors: Каримова Ксения, Кузнецов Илья, 21ПМИ-1**
 
+### Report file
+https://docs.google.com/document/d/1EPuRlZulgtOUrLw7y96aOajIAYQvEnYIk7DqY4SQLfo/edit?usp=sharing
+
 
 ### How to setup and run
 1. Ensure cmake and clang are installed properly
