@@ -2,6 +2,9 @@
 University laboratory work
 
 
+**Authors: Каримова Ксения, Кузнецов Илья, 21ПМИ-1**
+
+
 ### How to setup and run
 1. Ensure cmake and clang are installed properly
 ```bash
