@@ -10,3 +10,4 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(dinamic src/dinamic.cpp src/Knapsack.hpp)
 add_executable(2-approx src/2-approx.cpp src/Knapsack.hpp)
+add_executable(ptas src/ptas.cpp src/Knapsack.hpp)
