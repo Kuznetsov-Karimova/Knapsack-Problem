@@ -72,8 +72,7 @@ class Knapsack {
 public:
 
     Knapsack(const std::string& path_to_values, const std::string& path_to_weights,
-            const std::string& path_to_knapsack_capacity, const std::string& path_to_res)
-    {
+            const std::string& path_to_knapsack_capacity, const std::string& path_to_res) {
         // profits of each object
         read_file(path_to_values, m_values);
         // weights of the objects
@@ -128,6 +127,7 @@ public:
     }
     [[nodiscard]] auto get_count_of_opers() const -> size_t { return m_count_of_opers; } 
     [[nodiscard]] auto get_knapsack_capacity() const -> size_t { return m_knapsack_capacity; }
+    [[nodiscard]] auto get_count_of_sol() const -> int { return m_count_of_sol; }
 
     // to easy work with branch_and_bound_alg
     void define_by_object_struct() {
@@ -148,6 +148,8 @@ private:
     size_t m_count_of_opers = 0;
 
     std::vector<Object> obj_arr;
+
+    int m_count_of_sol = 0;
 };
 
 
@@ -192,6 +194,7 @@ void Knapsack_app(std::vector<std::chrono::duration<double>>& all_results, bool 
             std::cout << "Total weight: " << pack.get_total_weight() << std::endl;
             std::cout << "Time: " << elapsed.count() << " s" << std::endl;
             std::cout << "Count of opers: " << pack.get_count_of_opers() << std::endl;
+            std::cout << "Count of interim solutions: " << pack.get_count_of_sol() << std::endl;
 
             std::cout << std::endl;
         }

@@ -34,6 +34,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
             }
 
         }
+        ++m_count_of_opers;
 
         if (debug) {
             for (int elem: capacity_matrix[sub_number]) {
@@ -42,6 +43,7 @@ auto Knapsack::algorithm(bool debug) -> size_t {
             std::cout << "\n";
         }
     }
+    ++m_count_of_opers;
 
     size_t row_pos = m_count_of_sub;
     size_t column_pos = m_knapsack_capacity;
@@ -59,6 +61,9 @@ auto Knapsack::algorithm(bool debug) -> size_t {
         }
 
     }
+    ++m_count_of_opers;
+
+    m_count_of_sol += (m_count_of_sub + 1) * (m_knapsack_capacity + 1); // ПРОМЕЖУТОЧНЫЕ РЕШЕНИЯ
 
     print_res();
 

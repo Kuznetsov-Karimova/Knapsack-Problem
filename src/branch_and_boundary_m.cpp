@@ -22,7 +22,7 @@ struct NodeComparator {
 };
 
 auto calc_upper_bound(const Node& node, size_t obj_count, size_t knapsack_capacity,
-                      const std::vector<Object>& obj_arr, size_t count_of_opers) -> double {
+                      const std::vector<Object>& obj_arr, size_t& count_of_opers) -> double {
     
     int value_bound = node.total_value;
     int idx = node.level + 1;
@@ -64,6 +64,8 @@ auto Knapsack::algorithm(bool debug) -> size_t {
     pr_queue.push(parent);
 
     while (!pr_queue.empty()) {
+        ++m_count_of_sol; // ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ +1
+
         ++m_count_of_opers;
 
         parent = pr_queue.top();

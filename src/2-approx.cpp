@@ -64,11 +64,10 @@ auto Knapsack::algorithm(bool debug) -> size_t {
             q_greed_res += m_values[index];
             q_greed_res_subjects[index] = 1;
             remainder_of_cap -= m_weights[index];
-
-            m_count_of_opers += 3;
         }
        
     }
+    m_count_of_sol += 2; // ПРОМЕЖУТОЧНЫЕ РЕШЕНИЯ
 
     if (max_greed_res >= q_greed_res) {
 

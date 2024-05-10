@@ -5,21 +5,29 @@
 #include <numeric>
 #include "Knapsack.hpp"
 
-void generate_combinations(size_t n, int max_k, std::vector<std::vector<int>>& combinations) {
+auto generate_combinations(size_t n, int max_k, std::vector<std::vector<int>>& combinations) -> size_t {
+    size_t count_of_opers = 0;
     combinations.emplace_back();
     for (int k = 1; k <= max_k; ++k) {
+        count_of_opers++;
         std::string bitmask(k, 1);
         bitmask.resize(n, 0);
+
         do {
+            count_of_opers++;
+
             std::vector<int> comb;
             for (int i = 0; i < n; ++i) {
+                count_of_opers += 2;
                 if (bitmask[i] != 0) {
                     comb.push_back(i);
                 }
             }
+            count_of_opers++;
             combinations.push_back(comb);
         } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
     }
+    return count_of_opers;
 }
 
 // ptas by sahni
@@ -42,14 +50,16 @@ auto Knapsack::algorithm(bool debug) -> size_t {
                 available_cap -= m_weights[obj];
                 not_in_subset_value += m_values[obj];
             }
+            m_count_of_opers++;
         }
+        m_count_of_opers++;
         return not_in_subset_value;
     };
 
     // generate M_subsets
     std::vector<std::vector<int>> combinations;
     int k = 3;
-    generate_combinations(m_count_of_sub, k, combinations);
+    m_count_of_opers += generate_combinations(m_count_of_sub, k, combinations);
     std::vector<std::vector<int>> all_subsets_M;
     for (const auto& subset : combinations) {
         int subset_weight = 0;
@@ -74,6 +84,9 @@ auto Knapsack::algorithm(bool debug) -> size_t {
             this_value += m_values[obj];
         }
         m_count_of_opers++;
+
+        m_count_of_sol += 1; // ПРОМЕЖУТОЧНОЕ РЕШЕНИЕ
+
         if (this_value > knapsack_profit) {
             knapsack_profit = this_value;
             knapsack_objs.clear();
