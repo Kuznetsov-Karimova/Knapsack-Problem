@@ -1,13 +1,11 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include<algorithm>
 #include <algorithm>
 #include "Knapsack.hpp"
 
-void nampack_app(std::vector<std::chrono::duration<double>>& all_results, bool isPrint, bool debug = false);
 
-auto Nampack::algorithm(bool debug) -> size_t {
+auto Knapsack::algorithm(bool debug) -> size_t {
 
     size_t max_greed_res = 0;
     size_t q_greed_res = 0;
@@ -32,40 +30,40 @@ auto Nampack::algorithm(bool debug) -> size_t {
     std::sort(max_greed_indexes.begin(), max_greed_indexes.end(),
     [&](const int a, const int b) {
         ++m_count_of_opers;
-        return static_cast<double>(m_sub_values[a]) > static_cast<double>(m_sub_values[b]);
+        return static_cast<double>(m_values[a]) > static_cast<double>(m_values[b]);
     });
 
     std::sort(q_greed_indexes.begin(), q_greed_indexes.end(),
     [&](const int a, const int b) {
         ++m_count_of_opers;
-        return static_cast<double>(m_sub_values[a])/static_cast<double>(m_sub_sizes[a]) >
-            static_cast<double>(m_sub_values[b])/static_cast<double>(m_sub_sizes[b]);
+        return static_cast<double>(m_values[a])/static_cast<double>(m_weights[a]) >
+            static_cast<double>(m_values[b])/static_cast<double>(m_weights[b]);
     });
 
-    size_t remainder_of_cap = m_nap_size;
+    size_t remainder_of_cap = m_knapsack_capacity;
 
     for(auto index : max_greed_indexes) {
 
         ++m_count_of_opers;
-        if (static_cast<size_t>(m_sub_sizes[index]) <= remainder_of_cap) {
-            max_greed_res += m_sub_values[index];
+        if (static_cast<size_t>(m_weights[index]) <= remainder_of_cap) {
+            max_greed_res += m_values[index];
             max_greed_res_subjects[index] = 1;
-            remainder_of_cap -= m_sub_sizes[index];
+            remainder_of_cap -= m_weights[index];
 
             m_count_of_opers += 3;
         }
 
     }
 
-    remainder_of_cap = m_nap_size;
+    remainder_of_cap = m_knapsack_capacity;
 
     for(auto index : q_greed_indexes) {
 
         ++m_count_of_opers;
-        if (static_cast<size_t>(m_sub_sizes[index]) <= remainder_of_cap) {
-            q_greed_res += m_sub_values[index];
+        if (static_cast<size_t>(m_weights[index]) <= remainder_of_cap) {
+            q_greed_res += m_values[index];
             q_greed_res_subjects[index] = 1;
-            remainder_of_cap -= m_sub_sizes[index];
+            remainder_of_cap -= m_weights[index];
 
             m_count_of_opers += 3;
         }
@@ -94,65 +92,10 @@ auto main() -> int {
     std::vector<std::chrono::duration<double>> one_run(9);
 
 
-    nampack_app(one_run, true);
+    Knapsack_app(one_run, true);
 
     for (int j = 0; j < 9; ++j) {
         all_results[j] += one_run[j];
     }
 
-}
-
-void nampack_app(std::vector<std::chrono::duration<double>>& all_results, bool isPrint, bool debug) {
-
-
-    // ALL TESTS
-    std::chrono::duration<double> all_elapsed{};
-
-    int num = 0;
-
-    for (auto test: test_files) {
-        if (isPrint) {
-            std::cout << "Test: " << num << std::endl;
-        }
-
-        Nampack pack(test[0], test[1], test[2], test[3]);
-        
-        std::cout << "Capacity: " << pack.get_nap_size() << std::endl;
-        std::cout << "Prices: ";
-        pack.print_values();
-        std::cout << "Weights: ";
-        pack.print_weights();
-
-        // ALGHORITM 1 TEST TIME START
-        auto start = std::chrono::high_resolution_clock::now();
-
-        auto result = pack.algorithm(debug);
-
-        auto end = std::chrono::high_resolution_clock::now();
-
-        // ALGHORITM 1 TEST TIME END
-        std::chrono::duration<double> elapsed = end - start;
-
-        all_elapsed += elapsed;
-
-        if (isPrint) {
-            std::cout << "Result: " << result << std::endl;
-            std::cout << "Time: " << elapsed.count() << " s" << std::endl;
-            std::cout << "Count of opers: " << pack.get_count_of_opers() << std::endl;
-
-            std::cout << std::endl;
-        }
-
-        all_results[num] = elapsed;
-
-        ++num;
-    }
-
-    auto average_time = all_elapsed/(test_files.size());
-
-    if (isPrint) {
-        std::cout << "Average time: " << average_time.count() << std::endl;
-    }
-
-    all_results[num] = average_time;
 }

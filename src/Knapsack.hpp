@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <chrono>
 
 const std::vector<std::vector<std::string>> test_files = {
     {"./benchmarks/p01_p.txt", "./benchmarks/p01_w.txt", "./benchmarks/p01_c.txt", "./benchmarks/p01_s.txt"},
@@ -13,9 +14,7 @@ const std::vector<std::vector<std::string>> test_files = {
     {"./benchmarks/p05_p.txt", "./benchmarks/p05_w.txt", "./benchmarks/p05_c.txt", "./benchmarks/p05_s.txt"},
     {"./benchmarks/p06_p.txt", "./benchmarks/p06_w.txt", "./benchmarks/p06_c.txt", "./benchmarks/p06_s.txt"},
     {"./benchmarks/p07_p.txt", "./benchmarks/p07_w.txt", "./benchmarks/p07_c.txt", "./benchmarks/p07_s.txt"},
-    };
-
-void read_file(const std::string& path_to_file, std::vector<int>& vec);
+};
 
 void read_file(const std::string& path_to_file, std::vector<int>& vec) {
 
@@ -52,24 +51,29 @@ void read_file(const std::string& path_to_file, size_t& res) {
     }
 }
 
-class Nampack {
+
+class Knapsack {
 public:
 
-    Nampack(const std::string& path_to_values, const std::string& path_to_sizes,
-    const std::string& path_to_nap_size, const std::string& path_to_res) {
-
-        read_file(path_to_values, m_sub_values);
-        read_file(path_to_sizes, m_sub_sizes);
+    Knapsack(const std::string& path_to_values, const std::string& path_to_weights,
+            const std::string& path_to_knapsack_capacity, const std::string& path_to_res)
+    {
+        // profits of each object
+        read_file(path_to_values, m_values);
+        // weights of the objects
+        read_file(path_to_weights, m_weights);
+        // knapsack capacity
+        read_file(path_to_knapsack_capacity, m_knapsack_capacity);
+        // optimal selection of weights
         read_file(path_to_res, m_res);
-        read_file(path_to_nap_size, m_nap_size);
 
-        m_count_of_sub = m_sub_values.size();
+        m_count_of_sub = m_values.size();
         m_res_subs = std::vector<int>(m_count_of_sub, 0);
     }
 
     void print_values() const {
 
-        for (int elem: m_sub_values) {
+        for (int elem: m_values) {
             std::cout << elem << " ";
         }
         std::cout << std::endl;
@@ -78,7 +82,7 @@ public:
 
     void print_weights() const {
 
-        for (int elem: m_sub_sizes) {
+        for (int elem: m_weights) {
             std::cout << elem << " ";
         }
         std::cout << std::endl;
@@ -96,17 +100,71 @@ public:
 
     auto algorithm(bool debug = false) -> size_t;
 
-    [[nodiscard]] auto get_count_of_opers() const -> int { return m_count_of_opers; } 
-    [[nodiscard]] auto get_nap_size() const -> int { return m_nap_size; } 
+    [[nodiscard]] auto get_count_of_opers() const -> size_t { return m_count_of_opers; } 
+    [[nodiscard]] auto get_knapsack_capacity() const -> size_t { return m_knapsack_capacity; } 
 
 private:
-    std::vector<int> m_sub_values;
-    std::vector<int> m_sub_sizes;
+    std::vector<int> m_values;
+    std::vector<int> m_weights;
+    size_t m_knapsack_capacity;
     size_t m_res;
-    size_t m_nap_size;
 
     size_t m_count_of_sub;
     std::vector<int> m_res_subs = {};
     
     size_t m_count_of_opers = 0;
 };
+
+
+void Knapsack_app(std::vector<std::chrono::duration<double>>& all_results, bool isPrint, bool debug = false) {
+    // ALL TESTS
+    std::chrono::duration<double> all_elapsed{};
+
+    int num = 0;
+
+    for (auto test: test_files) {
+        if (isPrint) {
+            std::cout << "Test: " << num << std::endl;
+        }
+
+        Knapsack pack(test[0], test[1], test[2], test[3]);
+        
+        std::cout << "Capacity: " << pack.get_knapsack_capacity() << std::endl;
+        std::cout << "Prices: ";
+        pack.print_values();
+        std::cout << "Weights: ";
+        pack.print_weights();
+
+        // ALGHORITM 1 TEST TIME START
+        auto start = std::chrono::high_resolution_clock::now();
+
+        auto result = pack.algorithm(debug);
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        // ALGHORITM 1 TEST TIME END
+        std::chrono::duration<double> elapsed = end - start;
+
+        all_elapsed += elapsed;
+
+        if (isPrint) {
+            std::cout << "Result: " << result << std::endl;
+            std::cout << "Time: " << elapsed.count() << " s" << std::endl;
+            std::cout << "Count of opers: " << pack.get_count_of_opers() << std::endl;
+
+            std::cout << std::endl;
+        }
+
+        all_results[num] = elapsed;
+
+        ++num;
+    }
+
+    auto average_time = all_elapsed/(test_files.size());
+
+    if (isPrint) {
+        std::cout << "Average time: " << average_time.count() << std::endl;
+    }
+
+    all_results[num] = average_time;
+}
